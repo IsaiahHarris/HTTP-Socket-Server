@@ -11,7 +11,6 @@ const statusMessage = {
 }
 
 const server = net.createServer((connection) => {
-  console.log(process.argv[0]);
   connection.setEncoding('utf8');
 
   connection.on('data', (data) => {
@@ -23,6 +22,9 @@ server.listen(8080, () => {
   console.log('port 8080' + '\n');
 })
 
+server.on('end', () => {
+  console.log('client disconnect')
+})
 
 
 function getDaStuffs(data, sender) {
@@ -32,29 +34,30 @@ function getDaStuffs(data, sender) {
   let versio = method[2];
 
   if (wanted === '/' || wanted === '/index.html') {
-    sender.write(createHeader(versio, statusMessage.good, sourceFiles.index));
-    sender.end();
+    sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.index));
   } else if (wanted === '/helium.html') {
-    sender.write(createHeader(versio, statusMessage.good, sourceFiles.helium));
-    sender.end();
+   sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.helium));
   } else if (wanted === '/hydrogen.html') {
-    sender.write(createHeader(versio, statusMessage.good, sourceFiles.hydrogen));
-    sender.end();
+    sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.hydrogen));
   } else if (wanted === '/css/styles.css') {
-    sender.write(createHeader(versio, statusMessage.good, sourceFiles.css));
-    sender.end();
+    sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.css));
   } else {
-    sender.write(createHeader(versio, statusMessage.notFound, sourceFiles.fourohfour));
-    sender.end();
+    sender.write(createHeader(sender, versio, statusMessage.notFound, sourceFiles.fourohfour));
   }
+  sender.destroy();
 }
 
 
-function createHeader(version, status, source) {
+function createHeader(socket, version, status, source) {
   return `${version} ${status}
 status: ${version} ${status}
 server:${process.env.USER} ${process.env.TERM_PROGRAM} ${process.env.TERM_PROGRAM_VERSION}
 date: ${new Date()}
 
 ${source}`
+
 }
+
+server.on('end', () => {
+  console.log('connection ended');
+});

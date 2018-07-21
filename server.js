@@ -11,7 +11,7 @@ const statusMessage = {
 }
 
 const server = net.createServer((connection) => {
-
+  console.log(process.argv[0]);
   connection.setEncoding('utf8');
 
   connection.on('data', (data) => {
@@ -24,14 +24,7 @@ server.listen(8080, () => {
 })
 
 
-function createHeader(version, status, source) {
-  return `${version} ${status}
-status: ${version} ${status}
-server:${process.env.USER} ${process.env.TERM_PROGRAM} ${process.env.TERM_PROGRAM_VERSION}
-date: ${new Date()}
 
-${source}`
-}
 function getDaStuffs(data, sender) {
   let request = data.split('\r\n');
   let method = request[0].split(' ');
@@ -57,5 +50,11 @@ function getDaStuffs(data, sender) {
 }
 
 
+function createHeader(version, status, source) {
+  return `${version} ${status}
+status: ${version} ${status}
+server:${process.env.USER} ${process.env.TERM_PROGRAM} ${process.env.TERM_PROGRAM_VERSION}
+date: ${new Date()}
 
-
+${source}`
+}

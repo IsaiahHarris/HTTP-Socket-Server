@@ -11,6 +11,8 @@ const statusMessage = {
 }
 
 const server = net.createServer((connection) => {
+
+
   connection.setEncoding('utf8');
 
   connection.on('data', (data) => {
@@ -32,11 +34,13 @@ function getDaStuffs(data, sender) {
   let method = request[0].split(' ');
   let wanted = method[1];
   let versio = method[2];
+  console.log(wanted);
+
 
   if (wanted === '/' || wanted === '/index.html') {
     sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.index));
   } else if (wanted === '/helium.html') {
-   sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.helium));
+    sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.helium));
   } else if (wanted === '/hydrogen.html') {
     sender.write(createHeader(sender, versio, statusMessage.good, sourceFiles.hydrogen));
   } else if (wanted === '/css/styles.css') {
@@ -57,6 +61,8 @@ date: ${new Date()}
 ${source}`
 
 }
+
+
 
 server.on('end', () => {
   console.log('connection ended');
